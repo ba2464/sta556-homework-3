@@ -2420,7 +2420,7 @@ window.Quarto = {
 </section>
 <section id="data-inspection-and-validation" class="level2" data-number="1.2">
 <h2 data-number="1.2" class="anchored" data-anchor-id="data-inspection-and-validation"><span class="header-section-number">1.2</span> Data inspection and validation</h2>
-<div id="12d5b9d5" class="cell" data-execution_count="1">
+<div id="e93341be" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> display</span>
@@ -2522,7 +2522,7 @@ dtype: int64
 df[&quot;id&quot;].is_unique: True</code></pre>
 </div>
 </div>
-<p>The student-performance dataset contains 120 observations and 5 variables.</p>
+<p>The student-performance dataset contains 120 observations and 5 variables, including a student identifier, three predictors, and a response variable. The missing-value check shows 0 missing values, so no missing-data handling is required. The ID uniqueness check returns True, confirming that each observation has a distinct identifier. The predictors and response are numerical variables suitable for the matrix computations used in this analysis.</p>
 </section>
 <section id="reproducibility" class="level2" data-number="1.3">
 <h2 data-number="1.3" class="anchored" data-anchor-id="reproducibility"><span class="header-section-number">1.3</span> Reproducibility</h2>
@@ -2531,7 +2531,7 @@ df[&quot;id&quot;].is_unique: True</code></pre>
 </section>
 <section id="matrix-setup-and-standardization" class="level1" data-number="2">
 <h1 data-number="2"><span class="header-section-number">2</span> Matrix setup and standardization</h1>
-<div id="3279f931" class="cell" data-execution_count="2">
+<div id="be18956b" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>predictor_cols <span class="op">=</span> [</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;study_hours_per_week&quot;</span>,</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;attendance_pct&quot;</span>,</span>
@@ -2577,7 +2577,7 @@ Number of predictors (excluding intercept): 3</code></pre>
 </section>
 <section id="least-squares" class="level1" data-number="3">
 <h1 data-number="3"><span class="header-section-number">3</span> Least squares</h1>
-<div id="75afe676" class="cell" data-execution_count="3">
+<div id="05269f60" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>beta_hat, <span class="op">*</span>_ <span class="op">=</span> np.linalg.lstsq(X, y, rcond<span class="op">=</span><span class="va">None</span>)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>coefficient_names <span class="op">=</span> [<span class="st">&quot;Intercept&quot;</span>] <span class="op">+</span> [<span class="ss">f&quot;Standardized: </span><span class="sc">{</span>col<span class="sc">}</span><span class="ss">&quot;</span> <span class="cf">for</span> col <span class="kw">in</span> predictor_cols]</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>coefficients <span class="op">=</span> pd.Series(beta_hat, index<span class="op">=</span>coefficient_names, name<span class="op">=</span><span class="st">&quot;Estimate&quot;</span>)</span>
@@ -2639,13 +2639,13 @@ Elementwise X * beta_hat shape: (120, 4)
 Matrix product X @ beta_hat shape: (120,)</code></pre>
 </div>
 </div>
-<p>The in-sample RMSE is 4.98, measured in final-score units, and summarizes the magnitude of the differences between the observed and fitted scores. The least-squares coefficients are obtained using <span class="math inline">\(np.linalg.lstsq()\)</span>, and matrix multiplication through X @ beta_hat produces the fitted final scores for the 120 students. Among the three standardized predictors, prior score has the largest absolute estimated coefficient, indicating the largest fitted change in final score for a one-standard-deviation increase in a predictor, holding the others constant. The mean residual is approximately zero because the model includes an intercept, and ordinary least squares makes the residuals sum to zero up to numerical rounding. The RMSE of approximately 4.98 summarizes the typical magnitude of the differences between observed and fitted scores, measured in final-score units. Finally, the * operator performs elementwise multiplication and produces an array of shape (120, 4), whereas the @ operator performs matrix multiplication and produces a vector of 120 fitted values.</p>
+<p>The least-squares coefficients were estimated using <code>np.linalg.lstsq()</code>, and the matrix multiplication <code>X @ beta_hat</code> generates the fitted final scores. Among the standardized predictors, prior_score has the largest absolute estimated coefficient, indicating the largest fitted change in final score for a one-standard-deviation increase in a predictor, holding the others constant. The mean residual is approximately zero because the regression model includes an intercept, which causes the ordinary least-squares residuals to sum to zero up to numerical rounding. The in-sample RMSE is 4.98, measured in final-score units, and summarizes the magnitude of the differences between observed and fitted scores. Finally, <code>*</code> performs elementwise multiplication using broadcasting, whereas <code>@</code> performs matrix multiplication and produces a vector of fitted values.</p>
 </section>
 <section id="qr-svd-and-conditioning" class="level1" data-number="4">
 <h1 data-number="4"><span class="header-section-number">4</span> QR, SVD, and conditioning</h1>
 <section id="qr-decomposition" class="level2" data-number="4.1">
 <h2 data-number="4.1" class="anchored" data-anchor-id="qr-decomposition"><span class="header-section-number">4.1</span> QR decomposition</h2>
-<div id="dfc6e624" class="cell" data-execution_count="4">
+<div id="b915d863" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>Q, R <span class="op">=</span> np.linalg.qr(X)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Q.shape:&quot;</span>, Q.shape)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;R.shape:&quot;</span>, R.shape)</span>
@@ -2661,7 +2661,7 @@ Q.T @ Q is close to I: True</code></pre>
 </section>
 <section id="singular-value-decomposition" class="level2" data-number="4.2">
 <h2 data-number="4.2" class="anchored" data-anchor-id="singular-value-decomposition"><span class="header-section-number">4.2</span> Singular value decomposition</h2>
-<div id="a20b9d60" class="cell" data-execution_count="5">
+<div id="8a635523" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>U, s, Vt <span class="op">=</span> np.linalg.svd(X, full_matrices<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;U.shape:&quot;</span>, U.shape)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;s.shape:&quot;</span>, s.shape)</span>
@@ -2681,7 +2681,7 @@ SVD reconstruction close to X: True</code></pre>
 </section>
 <section id="rank-and-conditioning" class="level2" data-number="4.3">
 <h2 data-number="4.3" class="anchored" data-anchor-id="rank-and-conditioning"><span class="header-section-number">4.3</span> Rank and conditioning</h2>
-<div id="505d9d0a" class="cell" data-execution_count="6">
+<div id="f7cf99dc" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>X_raw <span class="op">=</span> np.column_stack([np.ones(<span class="bu">len</span>(predictors)), predictors])</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>cond_raw <span class="op">=</span> np.linalg.cond(X_raw)</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>cond_standardized <span class="op">=</span> np.linalg.cond(X)</span>
@@ -2694,7 +2694,7 @@ condition number of standardized X: 1.7747621723767468
 condition number of raw X: 1484.16939639802</code></pre>
 </div>
 </div>
-<p>The condition number decreased from 1484.17 for the raw design matrix to 1.77 after standardization. The orthogonality check returned <code>True</code>, confirming that the columns of <span class="math inline">\(Q\)</span> are orthonormal because <span class="math inline">\(Q^\top Q \approx I\)</span>. The QR reconstruction check returned True, confirming that multiplying the matrices (<span class="math inline">\(Q\)</span>) and (<span class="math inline">\(R\)</span>) reproduces the original standardized design matrix within numerical tolerance. The orthogonality check also returned True, verifying that the columns of (<span class="math inline">\(Q\)</span>) are orthonormal, since <span class="math inline">\((Q^\top Q)\)</span> is approximately the identity matrix. Similarly, the SVD reconstruction was successful, and its singular values describe how strongly the design matrix acts along different directions. All four singular values are positive, which is consistent with the matrix having full column rank and no exact linear dependence among its columns. A large condition number indicates that a matrix problem may be sensitive to small changes or numerical errors. In this analysis, the condition number decreased considerably from approximately 1484.17 for the raw design matrix to 1.77 for the standardized design matrix. This reduction suggests that the different measurement scales of the original predictors contributed substantially to the poor conditioning of the raw matrix. Since the standardized design matrix has rank four and a relatively low condition number, there is no indication of severe near-redundancy among its columns.</p>
+<p>The QR reconstruction check returned <code>True</code>, confirming that multiplying <span class="math inline">\(Q\)</span> and <span class="math inline">\(R\)</span> reproduces the standardized design matrix <span class="math inline">\(X\)</span> within numerical tolerance. The orthogonality check also returned <code>True</code>, verifying that the columns of <span class="math inline">\(Q\)</span> are orthonormal because <span class="math inline">\(Q^\top Q \approx I\)</span>. Similarly, the SVD reconstruction was successful, and the singular values describe the strength of the design matrix along different directions, with very small singular values potentially indicating near-linear dependence. A large condition number suggests that matrix computations may be sensitive to small perturbations or numerical errors. The condition number decreased from 1484.17 for the raw design matrix to 1.77 after standardization. This considerable reduction suggests that differences in the original predictors’ measurement scales contributed substantially to the raw matrix’s poor conditioning. Since the standardized design matrix has full column rank and a relatively low condition number, there is no evidence of severe near-redundancy among its columns, although standardization cannot eliminate genuine multicollinearity.</p>
 </section>
 </section>
 <section id="reproducibility-and-numerical-computing-reflection" class="level1" data-number="5">
